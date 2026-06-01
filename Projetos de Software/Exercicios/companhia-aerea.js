@@ -49,42 +49,81 @@ class Sistema {
         if (this.companhias[id]){
             this.companhias[id].nome = novoNome;
             console.log(`Nome da Companhia Atualizado!`)
+         } else {
+            console.log("\nErro: Companhia não encontrada.");
         }
     }
+
     excluirCompanhia(id){
        if (this.companhias[id]){
         this.companhias.splice(id, 1);
         console.log("Companhia removida com Sucesso!")
        }
        else{
-        console.log("Companhia não encontrada!")
+        console.log("\nErro: Companhia não encontrada!")
        }
     }
 
     // TRECHOS
     cadastrarTrecho(idCompanhia, origem, destino, valor){
-    const id = this.trechos.length + 1;
-    this.trechos.push({id, idCompanhia, origem, destino, valor});
-    console.log(`Trecho cadastrado com ID: ${id}`);
+         if (this.companhias[idCompanhia]) {
+            const novoTrecho = new Trecho(this.companhias[idCompanhia].nome, origem, destino, valor);
+            this.trechos.push(novoTrecho);
+            console.log("\nTrecho cadastrado com sucesso!");
+        } else {
+            console.log("\nErro: Companhia não encontrada.");
+        }
     }
+
     listarTrechos(){
         if (this.trechos.length === 0){
             console.log("Nenhum Trecho cadastrado")
         }
         else{
-            for (let i = 0; i < this.trechos.length; i++){
-                console.log(`[${i}] ${this.trechos[i].nome}`)
-            }
+            this.trechos.forEach((trecho, index) => {
+                console.log(`\n[${index}] ${trecho.origem} → ${trecho.destino}`);
+                console.log(`   ✈️  Companhia: ${trecho.companhia}`);
+                console.log(`   💰 Valor: R$ ${trecho.valor.toFixed(2)}`);
+                console.log("-------------------------------------------");
+            });
         }
     }
     listarTrechosPorCompanhia(){ 
-
+        console.log("\n======= ✈️  TRECHOS POR COMPANHIA =======");
+        if (this.companhias.length === 0) {
+            console.log("\nNenhuma companhia cadastrada.");
+        } else {
+            this.companhias.forEach((companhia) => {
+                console.log(`\n📌 ${companhia.nome.toUpperCase()}`);
+                const trechosDaCompanhia = this.trechos.filter(trecho => trecho.companhia === companhia.nome);
+                if (trechosDaCompanhia.length === 0) {
+                    console.log("   Nenhum trecho cadastrado para essa companhia.");
+                } else {
+                    trechosDaCompanhia.forEach((trecho, index) => {
+                        console.log(`   [${index}] ${trecho.origem} → ${trecho.destino} | R$ ${trecho.valor.toFixed(2)}`);
+                    });
+                }
+                console.log("-------------------------------------------");
+            });
+        }
     }
     editarTrecho(id, origem, destino, valor){
-
+        if (this.trechos[id]) {
+            this.trechos[id].origem = origem;
+            this.trechos[id].destino = destino;
+            this.trechos[id].valor = valor;
+            console.log("\nTrecho atualizado com sucesso!");
+        } else {
+            console.log("\nErro: Trecho não encontrado.");
+        }
     }
     excluirTrecho(id) { 
-
+       if (this.trechos[id]) {
+            this.trechos.splice(id, 1);
+            console.log("\nTrecho removido com sucesso!");
+        } else {
+            console.log("\nErro: Trecho não encontrado.");
+        }
     }
 }
 
