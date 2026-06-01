@@ -1,0 +1,9 @@
+{
+  "companhias": [
+    { "nome": "LATAM", "trechos": [] },
+    { "nome": "Gol", "trechos": [] }
+  ],
+  "trechos": [
+    { "companhia": "LATAM", "origem": "Recife", "destino": "São Paulo", "valor": 450.00 }
+  ]
+}

@@ -1,4 +1,5 @@
 const prompt = require('prompt-sync')();
+const fs = require('fs');
 
 class Companhia {
     constructor(nome) {
@@ -128,7 +129,25 @@ class Sistema {
 }
 
 // -------------------------------------------
+carregar ();{
+    if (!FileSystem.existsSync("passagens.js")){
+        return;
+    }
+    else{
+        const conteudo = FileSystem.readFileSync()
+        dados = JSON.parse(conteudo)
+        this.companhias = dados.companhias
+        this.trechos = dados.trechos 
+    }
+}
 
+salvar ();{
+    dados = {companhias: this.companhias,
+        trechos: this.trechos};
+        objeto = JSON.stringify(dados, null, 2);
+        FileSystem.writeFileSync("passagens.json", objeto);
+    }
+    
 const sistema = new Sistema();
 let opcao = -1;
 
@@ -247,4 +266,3 @@ while (opcao !== 0) {
             break;
     }
 }
-
