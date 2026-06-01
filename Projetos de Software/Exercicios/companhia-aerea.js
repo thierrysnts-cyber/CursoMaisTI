@@ -247,3 +247,4 @@ while (opcao !== 0) {
             break;
     }
 }
+
