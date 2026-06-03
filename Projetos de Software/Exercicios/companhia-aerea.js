@@ -28,13 +28,17 @@ class Sistema {
         prompt("Pressione ENTER para continuar...");
         console.clear();
     }
-
+ 
     // COMPANHIAS
-    cadastrarCompanhia(nome){
-    const novaCompanhia = new Companhia (nome);
+   cadastrarCompanhia(nome){
+    const novaCompanhia = new Companhia(nome);
     this.companhias.push(novaCompanhia);
+
+    this.salvar();
+
     console.log(`Companhia ${nome} cadastrada com Sucesso!`);
-    }
+}
+    
     listarCompanhias(){
     console.log(" - - COMPANHIAS - -\n")
     if (this.companhias.length === 0){
@@ -46,35 +50,46 @@ class Sistema {
         }
     }
 }
-    editarCompanhia(id, novoNome){
-        if (this.companhias[id]){
-            this.companhias[id].nome = novoNome;
-            console.log(`Nome da Companhia Atualizado!`)
-         } else {
-            console.log("\nErro: Companhia não encontrada.");
-        }
-    }
+  editarCompanhia(id, novoNome){
+    if (this.companhias[id]){
+        this.companhias[id].nome = novoNome;
 
-    excluirCompanhia(id){
-       if (this.companhias[id]){
-        this.companhias.splice(id, 1);
-        console.log("Companhia removida com Sucesso!")
-       }
-       else{
-        console.log("\nErro: Companhia não encontrada!")
-       }
+        this.salvar();
+
+        console.log(`Nome da Companhia Atualizado!`);
     }
+}
+
+  excluirCompanhia(id){
+    if (this.companhias[id]){
+        this.companhias.splice(id, 1);
+
+        this.salvar();
+
+        console.log("Companhia removida com Sucesso!");
+    }
+}
 
     // TRECHOS
     cadastrarTrecho(idCompanhia, origem, destino, valor){
-         if (this.companhias[idCompanhia]) {
-            const novoTrecho = new Trecho(this.companhias[idCompanhia].nome, origem, destino, valor);
-            this.trechos.push(novoTrecho);
-            console.log("\nTrecho cadastrado com sucesso!");
-        } else {
-            console.log("\nErro: Companhia não encontrada.");
-        }
+    if (this.companhias[idCompanhia]) {
+
+        const novoTrecho = new Trecho(
+            this.companhias[idCompanhia].nome,
+            origem,
+            destino,
+            valor
+        );
+
+        this.trechos.push(novoTrecho);
+
+        this.salvar();
+
+        console.log("\nTrecho cadastrado com sucesso!");
+    } else {
+        console.log("\nErro: Companhia não encontrada.");
     }
+}
 
     listarTrechos(){
         if (this.trechos.length === 0){
@@ -108,47 +123,73 @@ class Sistema {
             });
         }
     }
-    editarTrecho(id, origem, destino, valor){
-        if (this.trechos[id]) {
-            this.trechos[id].origem = origem;
-            this.trechos[id].destino = destino;
-            this.trechos[id].valor = valor;
-            console.log("\nTrecho atualizado com sucesso!");
-        } else {
-            console.log("\nErro: Trecho não encontrado.");
-        }
+   editarTrecho(id, origem, destino, valor){
+    if (this.trechos[id]) {
+
+        this.trechos[id].origem = origem;
+        this.trechos[id].destino = destino;
+        this.trechos[id].valor = valor;
+
+        this.salvar();
+
+        console.log("\nTrecho atualizado com sucesso!");
+    } else {
+        console.log("\nErro: Trecho não encontrado.");
     }
-    excluirTrecho(id) { 
-       if (this.trechos[id]) {
-            this.trechos.splice(id, 1);
-            console.log("\nTrecho removido com sucesso!");
-        } else {
-            console.log("\nErro: Trecho não encontrado.");
-        }
+}
+    excluirTrecho(id) {
+    if (this.trechos[id]) {
+
+        this.trechos.splice(id, 1);
+
+        this.salvar();
+
+        console.log("\nTrecho removido com sucesso!");
+    } else {
+        console.log("\nErro: Trecho não encontrado.");
     }
+}
+    carregar() {
+    if (!fs.existsSync("passagens.json")) {
+        return;
+    }
+
+    const conteudo = fs.readFileSync("passagens.json", "utf8");
+    const dados = JSON.parse(conteudo);
+
+    this.companhias = (dados.companhias || []).map(c => {
+        const companhia = new Companhia(c.nome);
+        companhia.trechos = c.trechos || [];
+        return companhia;
+    });
+
+    this.trechos = (dados.trechos || []).map(t => {
+        return new Trecho(
+            t.companhia,
+            t.origem,
+            t.destino,
+            t.valor
+        );
+    });
+}
+
+    salvar() {
+    const dados = {
+        companhias: this.companhias,
+        trechos: this.trechos
+    };
+
+    const objeto = JSON.stringify(dados, null, 2);
+
+    fs.writeFileSync("passagens.json", objeto, "utf8");
+}
 }
 
 // -------------------------------------------
-carregar ();{
-    if (!FileSystem.existsSync("passagens.js")){
-        return;
-    }
-    else{
-        const conteudo = FileSystem.readFileSync()
-        dados = JSON.parse(conteudo)
-        this.companhias = dados.companhias
-        this.trechos = dados.trechos 
-    }
-}
-
-salvar ();{
-    dados = {companhias: this.companhias,
-        trechos: this.trechos};
-        objeto = JSON.stringify(dados, null, 2);
-        FileSystem.writeFileSync("passagens.json", objeto);
-    }
+ 
     
 const sistema = new Sistema();
+sistema.carregar();
 let opcao = -1;
 
 console.clear();
