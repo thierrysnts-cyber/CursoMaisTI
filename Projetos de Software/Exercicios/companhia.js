@@ -6,47 +6,66 @@ const db = require('./database');
 // -------------------------------------------
 
 function pausar() {
-    // pausa a execucao e limpa a tela
+    prompt('\nDigite ENTER para continuar...');
+    console.clear();
 }
 
 function listarCompanhias() {
-    // busca todas as companhias no banco e exibe no terminal
-    // retorna o array de companhias
+    const companhias = db.prepare('SELECT * FROM Companhia').all();
+
+    if(companhias.length == 0) {
+        console.log('\nNenhuma companhia cadastrada.');
+    } else {
+        console.log('\n==== COMPANHIAS ====');
+        for( let i = 0; i < companhias.length; i++) {
+            console.log(`[${companhias[i].id}] ${companhias[i].nome} - Fundada em ${companhias[i].anoFundacap}`)
+        }
+    }
+    return companhias;
 }
 
 function validarOuCadastrarCompanhia(idInformado) {
-    // busca a companhia pelo id informado
-    // se nao existir, pergunta se o usuario quer cadastrar uma nova
-    // se sim, pede nome e ano de fundacao e insere no banco
-    // retorna o id valido ou null se o usuario optar por nao cadastrar
+    const companhia = db.prepare('SELECT * FROM Companhia WHERE id = ?').get(idInformado);
+
+    if (companhia) {
+        return idInformado;
+    }
+    console.log("\nNenhuma companhia cadastrada com esse ID.");
+    const opcaoCadastro = prompt("Deseja cadastrar uma nova companhia? (s/n): ");
+
+    if (opcaoCadastro.toLocaleLowerCase() !== 's'){
+        return null;
+    }
+    const nomeCompanhia = prompt("Nome da Companhia: ");
+    const anoFundacao = parseInt(prompt("Ano de Fundação: "));
+
+    const resultado = db.prepare(
+        "INSERT INTO Companhia (nome, anoFundacao) VALUES (?, ?)"
+    ).run(nomeCompanhia, anoFundacao);
+
+    console.log("\nCompanhia cadastrada com Sucesso!");
+
+    return resultado.lastInsertRowid
 }
 
 // -------------------------------------------
 // FUNÇÕES DE TRECHOS
 // -------------------------------------------
 
-function cadastrarTrecho() {
-    // lista as companhias, pede o id da companhia
-    // valida ou cadastra a companhia
-    // pede origem, destino, valor e numero de passagens
-    // insere o trecho no banco
+function  cadastrarTrecho(){
+ 
 }
 
-function listarTrechos() {
-    // busca todos os trechos com JOIN na tabela Companhia
-    // exibe os dados de cada trecho no terminal
-}
+function listarTrechos(){
+       
+    }
 
-function editarTrecho() {
-    // lista os trechos, pede o id do trecho a editar
-    // verifica se o trecho existe
-    // pede os novos dados e atualiza no banco
+function editarTrecho(){
+
 }
 
 function excluirTrecho() {
-    // lista os trechos, pede o id do trecho a excluir
-    // verifica se o trecho existe
-    // remove do banco
+   
 }
 
 // -------------------------------------------
@@ -54,10 +73,7 @@ function excluirTrecho() {
 // -------------------------------------------
 
 function cadastrarCupom() {
-    // lista as companhias, pede o id da companhia
-    // valida ou cadastra a companhia
-    // pede codigo, percentual de desconto e numero de cupons
-    // insere o cupom no banco
+   
 }
 
 function listarCupons() {
